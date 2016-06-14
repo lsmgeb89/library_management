@@ -5,11 +5,9 @@ USE Library;
 
 ### Create Tables ###
 CREATE TABLE BOOK (
-  Book_id     CHAR(10)        NOT NULL,
-  Isbn        CHAR(13)        NOT NULL    DEFAULT '0000000000000',
+  Isbn        CHAR(10)        NOT NULL    DEFAULT '0000000000',
   Title       VARCHAR(256)    NOT NULL,
-  CONSTRAINT  pk_book         PRIMARY KEY (Isbn),
-  CONSTRAINT  un_book_book_id UNIQUE (Book_id)
+  CONSTRAINT  pk_book         PRIMARY KEY (Isbn)
 );
 
 CREATE TABLE AUTHORS (
@@ -21,7 +19,7 @@ CREATE TABLE AUTHORS (
 
 CREATE TABLE BOOK_AUTHORS (
   Author_id   INT UNSIGNED              NOT NULL,
-  Isbn        CHAR(13)                  NOT NULL    DEFAULT '0000000000000',
+  Isbn        CHAR(10)                  NOT NULL    DEFAULT '0000000000',
   CONSTRAINT  pk_book_authors           PRIMARY KEY (Author_id, Isbn),
   CONSTRAINT  kf_book_authors_author_id FOREIGN KEY (Author_id) REFERENCES AUTHORS(Author_id)
               ON UPDATE CASCADE,
@@ -37,11 +35,11 @@ CREATE TABLE LIBRARY_BRANCH (
 );
 
 CREATE TABLE BOOK_COPIES (
-  Book_id       CHAR(10)                  NOT NULL,
-  Isbn          CHAR(13),
+  Book_id       INT UNSIGNED              NOT NULL    AUTO_INCREMENT,
+  Isbn          CHAR(10)                  NOT NULL    DEFAULT '0000000000',
   Branch_id     TINYINT(1) UNSIGNED       NOT NULL,
   No_of_Copies  INT UNSIGNED              NOT NULL,                    
-  CONSTRAINT    pk_book_copies            PRIMARY KEY (Book_id, Branch_id),
+  CONSTRAINT    pk_book_copies            PRIMARY KEY (Book_id),
   CONSTRAINT    pk_book_copies_isbn       FOREIGN KEY (Isbn)      REFERENCES BOOK(Isbn)
                 ON UPDATE CASCADE,
   CONSTRAINT    pk_book_copies_branch_id  FOREIGN KEY (Branch_id) REFERENCES LIBRARY_BRANCH(Branch_id)
@@ -62,7 +60,7 @@ CREATE TABLE BORROWER (
 
 CREATE TABLE BOOK_LOANS (
   Loan_id     CHAR(10)              NOT NULL,
-  Book_id     CHAR(10)              NOT NULL,
+  Book_id     INT UNSIGNED          NOT NULL,
   Card_no     CHAR(8)               NOT NULL,
   Date_out    DATE,
   Due_date    DATE,
@@ -105,7 +103,7 @@ LOAD DATA LOCAL INFILE 'C:/Users/ThinkPad-E531/Documents/Assignments/2016/Summer
  ENCLOSED BY ''
     LINES TERMINATED BY '\r\n'
    IGNORE 1 ROWS
-   (Book_id, Isbn, Title, @dummy, @dummy, @dummy, @dummy);
+   (Isbn, @dummy, Title, @dummy, @dummy, @dummy, @dummy);
 
 LOAD DATA LOCAL INFILE 'C:/Users/ThinkPad-E531/Documents/Assignments/2016/Summer/CS 6360.0U1 - Database Design/project_1/data_source/book_copies.csv'
      INTO TABLE BOOK_COPIES
@@ -113,11 +111,7 @@ LOAD DATA LOCAL INFILE 'C:/Users/ThinkPad-E531/Documents/Assignments/2016/Summer
  ENCLOSED BY ''
     LINES TERMINATED BY '\r\n'
    IGNORE 1 ROWS
-   (Book_id, Branch_id, No_of_Copies);
-
-UPDATE BOOK_COPIES T2
-JOIN  BOOK T1 ON T1.Book_id = T2.Book_id
-SET T2.Isbn = T1.Isbn;
+   (Isbn, Branch_id, No_of_Copies);
 
 LOAD DATA LOCAL INFILE 'C:/Users/ThinkPad-E531/Documents/Assignments/2016/Summer/CS 6360.0U1 - Database Design/project_1/data_source/books.csv'
      INTO TABLE AUTHORS
@@ -133,7 +127,7 @@ LOAD DATA LOCAL INFILE 'C:/Users/ThinkPad-E531/Documents/Assignments/2016/Summer
  ENCLOSED BY ''
     LINES TERMINATED BY '\r\n'
    IGNORE 1 ROWS
-   (@dummy, Isbn, @dummy, @name, @dummy, @dummy, @dummy)
+   (Isbn, @dummy, @dummy, @name, @dummy, @dummy, @dummy)
       SET Author_id = (SELECT Author_id
                       FROM AUTHORS
                       WHERE Name = @name);
