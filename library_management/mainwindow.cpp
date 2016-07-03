@@ -10,6 +10,9 @@ MainWindow::MainWindow(db::DBManager* db, QWidget *parent)
     search_model_(new QSqlQueryModel(this)),
     loans_model_(new QSqlQueryModel(this)) {
   ui_->setupUi(this);
+  ui_->resultView->setModel(search_model_);
+  ui_->result_view->setModel(loans_model_);
+  ui_->result_view->setModel(loans_model_);
 }
 
 MainWindow::~MainWindow() {
@@ -23,7 +26,6 @@ void MainWindow::on_searchButton_clicked() {
      WHERE  B.Title = '" + ui_->inputEdit->text() +
     "' AND C.Branch_id = '1' AND B.Isbn = U.Isbn AND B.Isbn = C.Isbn AND U.Author_id = A.Author_id;";
   search_model_->setQuery(db_->Query(query_str));
-  ui_->resultView->setModel(search_model_);
   ui_->resultView->show();
 }
 
@@ -58,6 +60,55 @@ void MainWindow::on_check_out_button_clicked() {
      FROM   BOOK_LOANS \
      WHERE  Book_id = " + book_id.toString() + " AND Card_no = '" + ui_->borrower_edit->text() + "';";
   loans_model_->setQuery(db_->Query(query_result_str));
-  ui_->result_view->setModel(loans_model_);
   ui_->result_view->show();
+}
+
+void MainWindow::on_check_in_button_clicked() {
+  QString query_book_loan_str;
+  if (ui_->check_in_button->text() == "Search") {
+    loans_model_->clear();
+    ui_->result_view->show();
+    query_book_loan_str =
+      "SELECT * \
+       FROM   BOOK_LOANS \
+       WHERE  Book_id = " + ui_->book_edit->text() + " AND Card_no = '" + ui_->borrower_edit->text() + "';";
+    QSqlQuery sql_query = db_->Query(query_book_loan_str);
+    if (!sql_query.exec()) {
+      qDebug() << "query error: ";
+    }
+    if (sql_query.size() != 1) {
+      qDebug() << "We cannot uniquely locate one record!";
+      return;
+    }
+    loans_model_->setQuery(sql_query);
+    ui_->result_view->show();
+
+
+    sql_query.clear();
+    ui_->check_in_button->setText("Check in");
+  } else if (ui_->check_in_button->text() == "Check in") {
+    QSqlQuery sql_query = db_->Query(query_book_loan_str);
+    query_book_loan_str =
+      "UPDATE BOOK_LOANS \
+       SET    Date_in = :date_in \
+       WHERE  Book_id = :book_id AND Card_no = :card_no";
+    sql_query.prepare(query_book_loan_str);
+    sql_query.bindValue(":date_in", QDate::currentDate());
+    sql_query.bindValue(":book_id", ui_->book_edit->text());
+    sql_query.bindValue(":card_no", ui_->borrower_edit->text());
+    sql_query.exec();
+
+    sql_query.clear();
+    query_book_loan_str =
+      "SELECT * \
+       FROM   BOOK_LOANS \
+       WHERE  Book_id = :book_id AND Card_no = :card_no";
+    sql_query.prepare(query_book_loan_str);
+    sql_query.bindValue(":book_id", ui_->book_edit->text());
+    sql_query.bindValue(":card_no", ui_->borrower_edit->text());
+    sql_query.exec();
+    loans_model_->setQuery(sql_query);
+    ui_->result_view->show();
+    ui_->check_in_button->setText("Search");
+  }
 }

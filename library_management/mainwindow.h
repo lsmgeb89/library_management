@@ -24,6 +24,8 @@ private slots:
 
   void on_check_out_button_clicked();
 
+  void on_check_in_button_clicked();
+
 private:
   db::DBManager *db_;
   Ui::MainWindow *ui_;
