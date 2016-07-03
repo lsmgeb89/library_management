@@ -8,11 +8,12 @@ MainWindow::MainWindow(db::DBManager* db, QWidget *parent)
     db_(db),
     ui_(new Ui::MainWindow),
     search_model_(new QSqlQueryModel(this)),
-    loans_model_(new QSqlQueryModel(this)) {
+    loans_model_(new QSqlQueryModel(this)),
+    borrower_model_(new QSqlQueryModel(this)) {
   ui_->setupUi(this);
   ui_->resultView->setModel(search_model_);
   ui_->result_view->setModel(loans_model_);
-  ui_->result_view->setModel(loans_model_);
+  ui_->borrower_table_view->setModel(borrower_model_);
 }
 
 MainWindow::~MainWindow() {
@@ -111,4 +112,54 @@ void MainWindow::on_check_in_button_clicked() {
     ui_->result_view->show();
     ui_->check_in_button->setText("Search");
   }
+}
+
+void MainWindow::on_create_button_clicked() {
+  if (ui_->ssn_line_edit->text().isEmpty() ||
+      ui_->fname_line_edit->text().isEmpty() ||
+      ui_->lname_line_edit->text().isEmpty()) {
+    qDebug() << "Please SSN, Name or Address!";
+  }
+
+  QSqlQuery* query = db_->GetQuery();
+
+  QString sql_find_max_card_no =
+    "SELECT MAX(CONVERT(SUBSTRING_INDEX(Card_no, 'ID', -1), UNSIGNED INTEGER)) \
+     FROM   BORROWER;";
+  query->prepare(sql_find_max_card_no);
+  query->exec();
+  query->next();
+  QVariant max_card_no = query->value(0);
+  qDebug() << max_card_no;
+  unsigned int max_no = max_card_no.toUInt() + 1;
+  QString card_no = "ID00" + QString::number(max_no);
+
+  QString sql_insert_borrower_str =
+    "INSERT INTO BORROWER (Card_no, Ssn, Fname, Lname, Address, City, State, Phone) \
+     VALUES (:card_no, :ssn, :fname, :lname, :address, :city, :state, :phone)";
+  query->clear();
+  query->prepare(sql_insert_borrower_str);
+  query->bindValue(":card_no", card_no);
+  query->bindValue(":ssn", ui_->ssn_line_edit->text());
+  query->bindValue(":fname", ui_->fname_line_edit->text());
+  query->bindValue(":lname", ui_->lname_line_edit->text());
+  query->bindValue(":address", ui_->address_line_edit->text().isEmpty() ?
+    QVariant(QVariant::String) : ui_->address_line_edit->text());
+  query->bindValue(":city", ui_->city_line_edit->text().isEmpty() ?
+    QVariant(QVariant::String) : ui_->city_line_edit->text());
+  query->bindValue(":state", ui_->state_line_edit->text().isEmpty() ?
+    QVariant(QVariant::String) : ui_->state_line_edit->text());
+  query->exec();
+
+  QString sql_query_borrower =
+    "SELECT * \
+     FROM BORROWER \
+     WHERE Card_no = :card_no";
+  query->clear();
+  query->prepare(sql_query_borrower);
+  query->bindValue(":card_no", card_no);
+  qDebug() << card_no;
+  query->exec();
+  borrower_model_->setQuery(*query);
+  ui_->borrower_table_view->show();
 }

@@ -14,8 +14,11 @@ public:
 
   QSqlQuery Query(QString& query_str);
 
+  QSqlQuery* GetQuery(void);
+
 private:
   QSqlDatabase mysql_db_;
+  QSqlQuery* db_query_;
 };
 
 } // namespace db

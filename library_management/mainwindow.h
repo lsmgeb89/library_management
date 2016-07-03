@@ -26,11 +26,14 @@ private slots:
 
   void on_check_in_button_clicked();
 
+  void on_create_button_clicked();
+
 private:
   db::DBManager *db_;
   Ui::MainWindow *ui_;
   QSqlQueryModel* search_model_;
   QSqlQueryModel* loans_model_;
+  QSqlQueryModel* borrower_model_;
 };
 
 #endif // MAINWINDOW_H

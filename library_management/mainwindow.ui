@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>555</width>
-    <height>443</height>
+    <width>654</width>
+    <height>469</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="searchWidget">
        <attribute name="title">
@@ -101,13 +101,128 @@
        <attribute name="title">
         <string>Borrower Management</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_3"/>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <widget class="QGroupBox" name="info_box">
+          <property name="title">
+           <string>Borrower Infomation</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_3">
+           <item row="0" column="0">
+            <widget class="QLabel" name="ssn_label">
+             <property name="text">
+              <string>Ssn</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="ssn_line_edit"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="fname_label">
+             <property name="text">
+              <string>First Name</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="fname_line_edit"/>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="lname_label">
+             <property name="text">
+              <string>Last Name</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="lname_line_edit"/>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="address_label">
+             <property name="text">
+              <string>Address</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="address_line_edit"/>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="city_label">
+             <property name="text">
+              <string>City</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="city_line_edit"/>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="state_label">
+             <property name="text">
+              <string>State</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QLineEdit" name="state_line_edit"/>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="phone_label">
+             <property name="text">
+              <string>Phone</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QLineEdit" name="phone_line_edit"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QTableView" name="borrower_table_view"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QWidget" name="borrower_widget" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <spacer name="h_spacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="create_button">
+             <property name="text">
+              <string>Ceate</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="clear_button">
+             <property name="text">
+              <string>Clear</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="fineWidget">
        <attribute name="title">
         <string>Fines</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_2"/>
       </widget>
      </widget>
     </item>
@@ -118,7 +233,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>555</width>
+     <width>654</width>
      <height>21</height>
     </rect>
    </property>

@@ -51,10 +51,10 @@ CREATE TABLE BORROWER (
   Ssn         CHAR(11)    NOT NULL,
   Fname       VARCHAR(16) NOT NULL,
   Lname       VARCHAR(16) NOT NULL,
-  Address     VARCHAR(64) NOT NULL,
-  City        VARCHAR(16) NOT NULL,
-  State       VARCHAR(16) NOT NULL,
-  Phone       CHAR(14)    NOT NULL,
+  Address     VARCHAR(64),
+  City        VARCHAR(16),
+  State       VARCHAR(16),
+  Phone       CHAR(14),
   CONSTRAINT  pk_borrower PRIMARY KEY (Card_no)
 );
 
