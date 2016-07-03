@@ -22,10 +22,13 @@ public:
 private slots:
   void on_searchButton_clicked();
 
+  void on_check_out_button_clicked();
+
 private:
+  db::DBManager *db_;
   Ui::MainWindow *ui_;
   QSqlQueryModel* search_model_;
-  db::DBManager *db_;
+  QSqlQueryModel* loans_model_;
 };
 
 #endif // MAINWINDOW_H

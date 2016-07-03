@@ -59,7 +59,7 @@ CREATE TABLE BORROWER (
 );
 
 CREATE TABLE BOOK_LOANS (
-  Loan_id     CHAR(10)              NOT NULL,
+  Loan_id     INT UNSIGNED          NOT NULL    AUTO_INCREMENT,
   Book_id     INT UNSIGNED          NOT NULL,
   Card_no     CHAR(8)               NOT NULL,
   Date_out    DATE,
@@ -73,7 +73,7 @@ CREATE TABLE BOOK_LOANS (
 );
 
 CREATE TABLE FINES (
-  Loan_id     CHAR(10)              NOT NULL,
+  Loan_id     INT UNSIGNED          NOT NULL,
   Fine_amt    DECIMAL(10,2)         NOT NULL,
   Paid        BOOLEAN               NOT NULL,
   CONSTRAINT  pk_fines              PRIMARY KEY (Loan_id),
