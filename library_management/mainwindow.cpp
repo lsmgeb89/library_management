@@ -21,12 +21,37 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::on_searchButton_clicked() {
+  QStringList search_words_list = ui_->inputEdit->text().split(QRegExp("\\s"));
+
   QString query_str =
-    "SELECT B.Isbn, B.Title, A.Name, C.No_of_Copies \
-     FROM   BOOK AS B, AUTHORS AS A, BOOK_AUTHORS AS U, BOOK_COPIES AS C \
-     WHERE  B.Title = '" + ui_->inputEdit->text() +
-    "' AND C.Branch_id = '1' AND B.Isbn = U.Isbn AND B.Isbn = C.Isbn AND U.Author_id = A.Author_id;";
-  search_model_->setQuery(db_->Query(query_str));
+    "SELECT B.Isbn AS 'ISBN(10)', B.Title AS 'Book Title', A.Name AS 'Author Name(s)', C.No_of_Copies AS 'Number of Copies' "
+    "FROM   BOOK AS B, AUTHORS AS A, BOOK_AUTHORS AS U, BOOK_COPIES AS C "
+    "WHERE  C.Branch_id = '1' AND (B.Isbn = U.Isbn AND B.Isbn = C.Isbn AND U.Author_id = A.Author_id)";
+
+  query_str += " AND (";
+  for (int i = 0; i < search_words_list.size(); i++) {
+    if (i != 0) {
+      query_str += " OR ";
+    }
+    query_str += "B.Title LIKE '%";
+    query_str += search_words_list[i];
+    query_str += "%' OR ";
+    query_str += "A.Name LIKE '%";
+    query_str += search_words_list[i];
+    query_str += "%' OR ";
+    query_str += "B.Isbn LIKE '%";
+    query_str += search_words_list[i];
+    query_str += "%'";
+  }
+  query_str += ");";
+
+  QSqlQuery* query = db_->GetQuery();
+  query->clear();
+  query->prepare(query_str);
+  if (query->exec()) {
+    qDebug() << query->lastError().text();
+  }
+  search_model_->setQuery(*query);
   ui_->resultView->show();
 }
 
