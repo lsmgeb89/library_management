@@ -17,9 +17,16 @@ public:
 
   QSqlQuery* GetQuery(void);
 
+  void SetBranch(const QString& name, const int& id);
+
+  int GetBranchId(void) { return branch_id_; }
+
 private:
   QSqlDatabase mysql_db_;
   QSqlQuery* db_query_;
+
+  QString branch_name_;
+  int branch_id_;
 };
 
 } // namespace db

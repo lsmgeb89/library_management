@@ -14,9 +14,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    dbmanager.cpp
+    dbmanager.cpp \
+    branchdialog.cpp
 
 HEADERS  += mainwindow.h \
-    dbmanager.h
+    dbmanager.h \
+    branchdialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    branchdialog.ui

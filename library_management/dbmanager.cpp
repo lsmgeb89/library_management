@@ -34,4 +34,9 @@ QSqlQuery* DBManager::GetQuery(void) {
   return db_query_;
 }
 
+void DBManager::SetBranch(const QString& name, const int& id) {
+  branch_name_ = name;
+  branch_id_ = id;
+}
+
 } // namespace db
