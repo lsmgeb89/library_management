@@ -58,36 +58,117 @@ void MainWindow::on_searchButton_clicked() {
 }
 
 void MainWindow::on_check_out_button_clicked() {
-  QString query_book_id_str =
-    "SELECT C.Book_id \
-     FROM   BOOK AS B, BOOK_COPIES AS C \
-     WHERE  B.Title = '" + ui_->book_edit->text() +
-    "' AND C.Branch_id = '1' AND B.Isbn = C.Isbn;";
-  QSqlQuery sql_query = db_->Query(query_book_id_str);
-  if (!sql_query.exec()) {
-    qDebug() << "query error: ";
+  QString book_id = ui_->book_edit->text();
+  QString card_no = ui_->borrower_edit->text();
+
+  // Check book is available or not
+  QString query_available =
+    "SELECT No_of_Copies "
+    "FROM   BOOK_COPIES "
+    "WHERE  Book_id = :book_id AND Branch_id = :branch_id";
+  QSqlQuery* query = db_->GetQuery();
+  query->clear();
+  query->prepare(query_available);
+  query->bindValue(":book_id", book_id);
+  query->bindValue(":branch_id", QString::number(db_->GetBranchId()));
+  if (!query->exec()) {
+    qDebug() << query->lastError().text();
   }
-  sql_query.next();
-  QVariant book_id = sql_query.value(0);
+  query->next();
+  if (query->value(0).toInt() < 1) {
+    QMessageBox::information(this, "Error", "Check out failed! <br> The book is not available now!");
+    return;
+  }
 
-  QSqlQuery& sql_insert(sql_query);
-  QString insert_book_loans_str =
-    "INSERT INTO BOOK_LOANS (Book_id, Card_no, Date_out, Due_date, Date_in) \
-     VALUES      (:book_id, :card_no, :date_out, :due_date, :date_in)";
-  sql_insert.prepare(insert_book_loans_str);
-  sql_insert.bindValue(":book_id", book_id);
-  sql_insert.bindValue(":card_no", ui_->borrower_edit->text());
+  // Check this borrower has three active loans
+  QString& query_loans(query_available);
+  query_loans =
+    "SELECT Count(*) "
+    "FROM   BOOK_LOANS "
+    "WHERE  (Card_no = :card_no) AND (Date_in IS NULL)";
+  query->clear();
+  query->prepare(query_loans);
+  query->bindValue(":card_no", card_no);
+  if (!query->exec()) {
+    qDebug() << query->lastError().text();
+  }
+  query->next();
+  if (query->value(0).toInt() == 3) {
+    QMessageBox::information(this, "Error", "Check out failed! <br> The Borrower has 3 active book loans!");
+    return;
+  }
+
+  // Check overdue
+  QString& query_overdue(query_available);
+  query_overdue =
+    "SELECT *"
+    "FROM   BOOK_LOANS "
+    "WHERE  (Card_no = :card_no) AND (Due_date < :current_date)";
+  query->clear();
+  query->prepare(query_overdue);
+  query->bindValue(":card_no", card_no);
+  query->bindValue(":current_date", QDate::currentDate());
+  query->exec();
+  if (query->size()) {
+    QMessageBox::information(this, "Error", "Check out failed! <br> The Borrower has " +
+                             QString::number(query->size()) + " overdue book loans!");
+    loans_model_->setQuery(*query);
+    ui_->result_view->show();
+    return;
+  } else {
+    qDebug() << "The borrower has no overdue book loans.";
+  }
+
+  // Check unpaid
+  QString& query_unpaid(query_available);
+  query_unpaid =
+    "SELECT * "
+    "FROM   BOOK_LOANS NATURAL JOIN FINES "
+    "WHERE  Card_no = :card_no AND Paid = FALSE";
+  query->clear();
+  query->prepare(query_unpaid);
+  query->bindValue(":card_no", card_no);
+  if (!query->exec()) {
+    qDebug() << query->lastError().text();
+  }
+  if (query->size()) {
+    QMessageBox::information(this, "Error", "Check out failed! <br> The Borrower has " +
+                             QString::number(query->size()) + " unpaid fines!");
+    loans_model_->setQuery(*query);
+    ui_->result_view->show();
+    return;
+  }
+
+  // Insert a record
+  QString& insert_book_loans_str(query_available);
+  insert_book_loans_str =
+    "INSERT INTO BOOK_LOANS (Book_id, Card_no, Date_out, Due_date, Date_in) "
+    "VALUES      (:book_id, :card_no, :date_out, :due_date, :date_in)";
+  query->clear();
+  query->prepare(insert_book_loans_str);
+  query->bindValue(":book_id", book_id);
+  query->bindValue(":card_no", card_no);
   QDate date = QDate::currentDate();
-  sql_insert.bindValue(":date_out", date);
-  sql_insert.bindValue(":due_date", date.addDays(14));
-  sql_insert.bindValue(":date_in", QVariant(QVariant::Date));
-  sql_insert.exec();
+  query->bindValue(":date_out", date);
+  query->bindValue(":due_date", date.addDays(14));
+  query->bindValue(":date_in", QVariant(QVariant::Date));
+  if (!query->exec()) {
+    qDebug() << query->lastError().text();
+  } else {
+    QMessageBox::information(this, "Success", "Check out success!");
+  }
 
+  // Show final result
   QString query_result_str =
-    "SELECT * \
-     FROM   BOOK_LOANS \
-     WHERE  Book_id = " + book_id.toString() + " AND Card_no = '" + ui_->borrower_edit->text() + "';";
-  loans_model_->setQuery(db_->Query(query_result_str));
+    "SELECT * "
+    "FROM   BOOK_LOANS "
+    "WHERE  Book_id = :book_id AND Card_no = :card_no";
+  query->clear();
+  query->prepare(query_result_str);
+  query->bindValue(":book_id", book_id);
+  query->bindValue(":card_no", card_no);
+  query->exec();
+  loans_model_->setQuery(*query);
   ui_->result_view->show();
 }
 

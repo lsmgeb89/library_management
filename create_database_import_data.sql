@@ -77,7 +77,7 @@ CREATE TABLE FINES (
   Fine_amt    DECIMAL(10,2)         NOT NULL,
   Paid        BOOLEAN               NOT NULL,
   CONSTRAINT  pk_fines              PRIMARY KEY (Loan_id),
-  CONSTRAINT  fk_fines_load_id      FOREIGN KEY (Loan_id) REFERENCES BOOK_LOANS(Loan_id)
+  CONSTRAINT  fk_fines_loan_id      FOREIGN KEY (Loan_id) REFERENCES BOOK_LOANS(Loan_id)
               ON UPDATE CASCADE
 );
 
