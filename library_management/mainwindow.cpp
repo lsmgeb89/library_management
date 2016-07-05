@@ -60,6 +60,7 @@ void MainWindow::on_searchButton_clicked() {
 void MainWindow::on_check_out_button_clicked() {
   QString book_id = ui_->book_edit->text();
   QString card_no = ui_->borrower_edit->text();
+  int branch_id = db_->GetBranchId();
 
   // Check whether the book is available or not
   QString query_available =
@@ -70,7 +71,7 @@ void MainWindow::on_check_out_button_clicked() {
   query->clear();
   query->prepare(query_available);
   query->bindValue(":book_id", book_id);
-  query->bindValue(":branch_id", QString::number(db_->GetBranchId()));
+  query->bindValue(":branch_id", branch_id);
   if (!query->exec()) {
     qDebug() << query->lastError().text();
   }
@@ -156,6 +157,20 @@ void MainWindow::on_check_out_button_clicked() {
     qDebug() << query->lastError().text();
   } else {
     QMessageBox::information(this, "Success", "Check out success!");
+  }
+
+  // Update number of copies
+  QString& update_copies_str(query_available);
+  update_copies_str =
+    "UPDATE BOOK_COPIES "
+    "SET    No_of_Copies = No_of_Copies - 1 "
+    "WHERE  Book_id = :book_id AND Branch_id = :branch_id";
+  query->clear();
+  query->prepare(update_copies_str);
+  query->bindValue(":book_id", book_id);
+  query->bindValue(":branch_id", branch_id);
+  if (!query->exec()) {
+    qDebug() << query->lastError().text();
   }
 
   // Show final result
