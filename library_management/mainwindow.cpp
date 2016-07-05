@@ -61,7 +61,7 @@ void MainWindow::on_check_out_button_clicked() {
   QString book_id = ui_->book_edit->text();
   QString card_no = ui_->borrower_edit->text();
 
-  // Check book is available or not
+  // Check whether the book is available or not
   QString query_available =
     "SELECT No_of_Copies "
     "FROM   BOOK_COPIES "
@@ -80,7 +80,7 @@ void MainWindow::on_check_out_button_clicked() {
     return;
   }
 
-  // Check this borrower has three active loans
+  // Check whether this borrower has three active loans
   QString& query_loans(query_available);
   query_loans =
     "SELECT Count(*) "
@@ -173,53 +173,95 @@ void MainWindow::on_check_out_button_clicked() {
 }
 
 void MainWindow::on_check_in_button_clicked() {
-  QString query_book_loan_str;
-  if (ui_->check_in_button->text() == "Search") {
-    loans_model_->clear();
-    ui_->result_view->show();
-    query_book_loan_str =
-      "SELECT * \
-       FROM   BOOK_LOANS \
-       WHERE  Book_id = " + ui_->book_edit->text() + " AND Card_no = '" + ui_->borrower_edit->text() + "';";
-    QSqlQuery sql_query = db_->Query(query_book_loan_str);
-    if (!sql_query.exec()) {
-      qDebug() << "query error: ";
-    }
-    if (sql_query.size() != 1) {
-      qDebug() << "We cannot uniquely locate one record!";
-      return;
-    }
-    loans_model_->setQuery(sql_query);
-    ui_->result_view->show();
+  QSqlQuery* query = db_->GetQuery();
+  QString book_id = ui_->book_edit->text();
+  int branch_id = db_->GetBranchId();
 
-
-    sql_query.clear();
-    ui_->check_in_button->setText("Check in");
-  } else if (ui_->check_in_button->text() == "Check in") {
-    QSqlQuery sql_query = db_->Query(query_book_loan_str);
-    query_book_loan_str =
-      "UPDATE BOOK_LOANS \
-       SET    Date_in = :date_in \
-       WHERE  Book_id = :book_id AND Card_no = :card_no";
-    sql_query.prepare(query_book_loan_str);
-    sql_query.bindValue(":date_in", QDate::currentDate());
-    sql_query.bindValue(":book_id", ui_->book_edit->text());
-    sql_query.bindValue(":card_no", ui_->borrower_edit->text());
-    sql_query.exec();
-
-    sql_query.clear();
-    query_book_loan_str =
-      "SELECT * \
-       FROM   BOOK_LOANS \
-       WHERE  Book_id = :book_id AND Card_no = :card_no";
-    sql_query.prepare(query_book_loan_str);
-    sql_query.bindValue(":book_id", ui_->book_edit->text());
-    sql_query.bindValue(":card_no", ui_->borrower_edit->text());
-    sql_query.exec();
-    loans_model_->setQuery(sql_query);
-    ui_->result_view->show();
-    ui_->check_in_button->setText("Search");
+  // Locate an active BOOK_LOANS record
+  QString query_book_loan_str =
+    "SELECT Loan_id, Due_date "
+    "FROM   BOOK_LOANS "
+    "WHERE  Book_id = :book_id";
+  query->clear();
+  query->prepare(query_book_loan_str);
+  query->bindValue(":book_id", book_id);
+  if (!query->exec()) {
+    qDebug() << query->lastError().text();
   }
+  if (query->size() != 1) {
+    qDebug() << "We cannot uniquely locate one record!";
+    return;
+  }
+
+  // Check overdue
+  query->next();
+  qint64 offset = query->value(1).toDate().daysTo(QDate::currentDate());
+  bool overdue = offset > 0;
+  float fines = 0.0f;
+  if (overdue) {
+    QVariant loan_id = query->value(0);
+    QString& insert_fines_str(query_book_loan_str);
+    insert_fines_str =
+      "INSERT INTO FINES(Loan_id, Fine_amt, Paid) "
+      "VALUES      (:loan_id, :fines, FALSE)";
+    query->clear();
+    query->prepare(insert_fines_str);
+    query->bindValue(":loan_id", loan_id);
+    fines = offset * 0.25f;
+    query->bindValue(":fines", fines);
+    query->exec();
+    QMessageBox::information(this, "Warning", "You have a fine with " + QString::number(fines));
+  }
+
+  // Update a record
+  QString& update_book_loan_str(query_book_loan_str);
+  update_book_loan_str =
+   "UPDATE BOOK_LOANS "
+   "SET    Date_in = :date_in "
+   "WHERE  Book_id = :book_id";
+  query->clear();
+  query->prepare(update_book_loan_str);
+  query->bindValue(":date_in", QDate::currentDate());
+  query->bindValue(":book_id", book_id);
+  query->exec();
+
+  // Update number of copies
+  QString& update_copies_str(query_book_loan_str);
+  update_copies_str =
+    "UPDATE BOOK_COPIES "
+    "SET    No_of_Copies = No_of_Copies + 1 "
+    "WHERE  Book_id = :book_id AND Branch_id = :branch_id";
+  query->clear();
+  query->prepare(update_copies_str);
+  query->bindValue(":book_id", book_id);
+  query->bindValue(":branch_id", branch_id);
+  if (!query->exec()) {
+    qDebug() << query->lastError().text();
+  }
+
+  // Query result
+  QString& query_result_str(query_book_loan_str);
+  if(overdue) {
+    query_result_str =
+      "SELECT * "
+      "FROM   BOOK_LOANS NATURAL JOIN FINES "
+      "WHERE  Book_id = :book_id";
+  } else {
+    query_result_str =
+      "SELECT * "
+      "FROM   BOOK_LOANS "
+      "WHERE  Book_id = :book_id";
+  }
+  query->clear();
+  query->prepare(query_result_str);
+  query->bindValue(":book_id", book_id);
+  if (!query->exec()) {
+    qDebug() << query->lastError().text();
+  }
+
+  // Show result
+  loans_model_->setQuery(*query);
+  ui_->result_view->show();
 }
 
 void MainWindow::on_create_button_clicked() {
