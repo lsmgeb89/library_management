@@ -280,17 +280,42 @@ void MainWindow::on_check_in_button_clicked() {
 }
 
 void MainWindow::on_create_button_clicked() {
-  if (ui_->ssn_line_edit->text().isEmpty() ||
-      ui_->fname_line_edit->text().isEmpty() ||
-      ui_->lname_line_edit->text().isEmpty()) {
-    qDebug() << "Please SSN, Name or Address!";
+  QSqlQuery* query = db_->GetQuery();
+  QString query_str;
+  QString ssn(ui_->ssn_line_edit->text());
+  QString fname(ui_->fname_line_edit->text());
+  QString lname(ui_->lname_line_edit->text());
+  QString address(ui_->address_line_edit->text());
+  QString city(ui_->city_line_edit->text());
+  QString state(ui_->state_line_edit->text());
+  QString phone(ui_->phone_line_edit->text());
+
+  if (ssn.isEmpty() || fname.isEmpty() || lname.isEmpty() || address.isEmpty()) {
+    QMessageBox::critical(this, "Error", "SSN, Name or Address could not be empty!");
+    return;
   }
 
-  QSqlQuery* query = db_->GetQuery();
+  // Check SSN
+  QString& query_double_ssn(query_str);
+  query_double_ssn =
+    "SELECT * "
+    "FROM   BORROWER "
+    "WHERE  Ssn = :ssn";
+  query->clear();
+  query->prepare(query_double_ssn);
+  query->bindValue(":ssn", ssn);
+  if (!query->exec()) {
+    qDebug() << query->lastError().text();
+  }
+  if (query->size()) {
+    QMessageBox::critical(this, "Error", "Duplicate SSN Number!");
+    return;
+  }
 
   QString sql_find_max_card_no =
     "SELECT MAX(CONVERT(SUBSTRING_INDEX(Card_no, 'ID', -1), UNSIGNED INTEGER)) \
-     FROM   BORROWER;";
+     FROM   BORROWER";
+  query->clear();
   query->prepare(sql_find_max_card_no);
   query->exec();
   query->next();
@@ -305,15 +330,13 @@ void MainWindow::on_create_button_clicked() {
   query->clear();
   query->prepare(sql_insert_borrower_str);
   query->bindValue(":card_no", card_no);
-  query->bindValue(":ssn", ui_->ssn_line_edit->text());
-  query->bindValue(":fname", ui_->fname_line_edit->text());
-  query->bindValue(":lname", ui_->lname_line_edit->text());
-  query->bindValue(":address", ui_->address_line_edit->text().isEmpty() ?
-    QVariant(QVariant::String) : ui_->address_line_edit->text());
-  query->bindValue(":city", ui_->city_line_edit->text().isEmpty() ?
-    QVariant(QVariant::String) : ui_->city_line_edit->text());
-  query->bindValue(":state", ui_->state_line_edit->text().isEmpty() ?
-    QVariant(QVariant::String) : ui_->state_line_edit->text());
+  query->bindValue(":ssn", ssn);
+  query->bindValue(":fname", fname);
+  query->bindValue(":lname", lname);
+  query->bindValue(":address", address.isEmpty() ? QVariant(QVariant::String) : address);
+  query->bindValue(":city", city.isEmpty() ? QVariant(QVariant::String) : city);
+  query->bindValue(":state", state.isEmpty() ? QVariant(QVariant::String) : state);
+  query->bindValue(":phone", phone.isEmpty() ? QVariant(QVariant::String) : phone);
   query->exec();
 
   QString sql_query_borrower =
@@ -327,4 +350,15 @@ void MainWindow::on_create_button_clicked() {
   query->exec();
   borrower_model_->setQuery(*query);
   ui_->borrower_table_view->show();
+}
+
+void MainWindow::on_clear_button_clicked() {
+  ui_->ssn_line_edit->clear();
+  ui_->fname_line_edit->clear();
+  ui_->lname_line_edit->clear();
+  ui_->address_line_edit->clear();
+  ui_->city_line_edit->clear();
+  ui_->state_line_edit->clear();
+  ui_->city_line_edit->clear();
+  ui_->phone_line_edit->clear();
 }

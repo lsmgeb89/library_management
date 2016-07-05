@@ -28,6 +28,8 @@ private slots:
 
   void on_create_button_clicked();
 
+  void on_clear_button_clicked();
+
 private:
   db::DBManager *db_;
   Ui::MainWindow *ui_;
