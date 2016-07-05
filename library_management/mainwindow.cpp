@@ -129,7 +129,7 @@ void MainWindow::on_check_out_button_clicked() {
   query_unpaid =
     "SELECT * "
     "FROM   BOOK_LOANS NATURAL JOIN FINES "
-    "WHERE  Card_no = :card_no AND Paid = FALSE";
+    "WHERE  Card_no = :card_no AND Paid = 'Unpaid'";
   query->clear();
   query->prepare(query_unpaid);
   query->bindValue(":card_no", card_no);
@@ -222,7 +222,7 @@ void MainWindow::on_check_in_button_clicked() {
     QString& insert_fines_str(query_book_loan_str);
     insert_fines_str =
       "INSERT INTO FINES(Loan_id, Fine_amt, Paid) "
-      "VALUES      (:loan_id, :fines, FALSE)";
+      "VALUES      (:loan_id, :fines, 'Unpaid')";
     query->clear();
     query->prepare(insert_fines_str);
     query->bindValue(":loan_id", loan_id);

@@ -73,11 +73,11 @@ CREATE TABLE BOOK_LOANS (
 );
 
 CREATE TABLE FINES (
-  Loan_id     INT UNSIGNED          NOT NULL,
-  Fine_amt    DECIMAL(10,2)         NOT NULL,
-  Paid        BOOLEAN               NOT NULL,
-  CONSTRAINT  pk_fines              PRIMARY KEY (Loan_id),
-  CONSTRAINT  fk_fines_loan_id      FOREIGN KEY (Loan_id) REFERENCES BOOK_LOANS(Loan_id)
+  Loan_id     INT UNSIGNED           NOT NULL,
+  Fine_amt    DECIMAL(10,2)          NOT NULL,
+  Paid        ENUM('Paid', 'Unpaid') NOT NULL,
+  CONSTRAINT  pk_fines               PRIMARY KEY (Loan_id),
+  CONSTRAINT  fk_fines_loan_id       FOREIGN KEY (Loan_id) REFERENCES BOOK_LOANS(Loan_id)
               ON UPDATE CASCADE
 );
 
