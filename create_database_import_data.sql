@@ -132,6 +132,11 @@ LOAD DATA LOCAL INFILE 'C:/Users/ThinkPad-E531/Documents/Assignments/2016/Summer
                       FROM AUTHORS
                       WHERE Name = @name);
 
+### Deal with noise ###
+UPDATE BOOK
+SET    TITLE = REPLACE(TITLE, '&amp;', '&')
+WHERE  TITLE LIKE '%&amp;%';
+
 ### Show Data ###
 SELECT * FROM BOOK LIMIT 10;
 SELECT * FROM AUTHORS LIMIT 10;
