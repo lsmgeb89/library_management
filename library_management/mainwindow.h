@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QSqlQueryModel>
+#include <QSqlTableModel>
 
 namespace Ui {
   class MainWindow;
@@ -30,12 +31,16 @@ private slots:
 
   void on_clear_button_clicked();
 
+  void on_search_button_clicked();
+
 private:
-  db::DBManager *db_;
-  Ui::MainWindow *ui_;
+  db::DBManager* db_;
+  Ui::MainWindow* ui_;
   QSqlQueryModel* search_model_;
   QSqlQueryModel* loans_model_;
   QSqlQueryModel* borrower_model_;
+  QSqlQueryModel* overdue_model_;
+  QSqlTableModel* fines_model_;
 };
 
 #endif // MAINWINDOW_H

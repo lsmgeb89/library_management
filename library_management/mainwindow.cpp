@@ -9,11 +9,15 @@ MainWindow::MainWindow(db::DBManager* db, QWidget *parent)
     ui_(new Ui::MainWindow),
     search_model_(new QSqlQueryModel(this)),
     loans_model_(new QSqlQueryModel(this)),
-    borrower_model_(new QSqlQueryModel(this)) {
+    borrower_model_(new QSqlQueryModel(this)),
+    overdue_model_(new QSqlQueryModel(this)),
+    fines_model_(new QSqlTableModel(this)) {
   ui_->setupUi(this);
   ui_->resultView->setModel(search_model_);
   ui_->result_view->setModel(loans_model_);
   ui_->borrower_table_view->setModel(borrower_model_);
+  ui_->overdue_view->setModel(overdue_model_);
+  ui_->fines_view->setModel(fines_model_);
 }
 
 MainWindow::~MainWindow() {
@@ -104,7 +108,7 @@ void MainWindow::on_check_out_button_clicked() {
   query_overdue =
     "SELECT *"
     "FROM   BOOK_LOANS "
-    "WHERE  (Card_no = :card_no) AND (Due_date < :current_date)";
+    "WHERE  (Card_no = :card_no) AND (Due_date < :current_date) AND (Date_in IS NULL)";
   query->clear();
   query->prepare(query_overdue);
   query->bindValue(":card_no", card_no);
@@ -361,4 +365,46 @@ void MainWindow::on_clear_button_clicked() {
   ui_->state_line_edit->clear();
   ui_->city_line_edit->clear();
   ui_->phone_line_edit->clear();
+}
+
+void MainWindow::on_search_button_clicked() {
+  QSqlQuery* query = db_->GetQuery();
+  QString query_str;
+  QString card_number = ui_->card_number_edit->text();
+
+  // Check overdue
+  QString& query_overdue(query_str);
+  query_overdue =
+    "SELECT *"
+    "FROM   BOOK_LOANS "
+    "WHERE  (Card_no = :card_no) AND (Due_date < :current_date) AND (Date_in IS NULL)";
+  query->clear();
+  query->prepare(query_overdue);
+  query->bindValue(":card_no", card_number);
+  query->bindValue(":current_date", QDate::currentDate());
+  query->exec();
+  if (query->size()) {
+    overdue_model_->setQuery(*query);
+    ui_->overdue_view->show();
+  }
+
+  // Check unpaid
+  QString& query_fines(query_str);
+  query_fines =
+    "CREATE VIEW SPECIFIC_FINES "
+    "         AS SELECT * "
+    "       FROM BOOK_LOANS NATURAL JOIN FINES "
+    "      WHERE Card_no = :card_number";
+  query->clear();
+  query->prepare(query_fines);
+  query->bindValue(":card_number", card_number);
+  if (!query->exec()) {
+    qDebug() << query->lastError().text();
+  }
+  if (query->size()) {
+    fines_model_->setTable("SPECIFIC_FINES");
+    fines_model_->setEditStrategy(QSqlTableModel::OnFieldChange);
+    fines_model_->select();
+    ui_->fines_view->show();
+  }
 }
