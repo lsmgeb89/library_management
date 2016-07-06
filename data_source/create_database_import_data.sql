@@ -38,7 +38,7 @@ CREATE TABLE BOOK_COPIES (
   Book_id       INT UNSIGNED              NOT NULL    AUTO_INCREMENT,
   Isbn          CHAR(10)                  NOT NULL    DEFAULT '0000000000',
   Branch_id     TINYINT(1) UNSIGNED       NOT NULL,
-  No_of_Copies  INT UNSIGNED              NOT NULL,                    
+  No_of_Copies  INT UNSIGNED              NOT NULL,
   CONSTRAINT    pk_book_copies            PRIMARY KEY (Book_id),
   CONSTRAINT    pk_book_copies_isbn       FOREIGN KEY (Isbn)      REFERENCES BOOK(Isbn)
                 ON UPDATE CASCADE,
@@ -82,14 +82,14 @@ CREATE TABLE FINES (
 );
 
 ### Import Data ###
-LOAD DATA LOCAL INFILE 'C:/Users/ThinkPad-E531/Documents/Assignments/2016/Summer/CS 6360.0U1 - Database Design/project_1/data_source/library_branch.csv'
+LOAD DATA LOCAL INFILE 'library_branch.csv'
      INTO TABLE LIBRARY_BRANCH
    FIELDS TERMINATED BY '\t'
  ENCLOSED BY ''
     LINES TERMINATED BY '\n'
    IGNORE 1 ROWS;
 
-LOAD DATA LOCAL INFILE 'C:/Users/ThinkPad-E531/Documents/Assignments/2016/Summer/CS 6360.0U1 - Database Design/project_1/data_source/borrowers.csv'
+LOAD DATA LOCAL INFILE 'borrowers.csv'
      INTO TABLE BORROWER
    FIELDS TERMINATED BY ','
  ENCLOSED BY ''
@@ -97,7 +97,7 @@ LOAD DATA LOCAL INFILE 'C:/Users/ThinkPad-E531/Documents/Assignments/2016/Summer
    IGNORE 1 ROWS
    (Card_no, Ssn, Fname, Lname, @dummy, Address, City, State, Phone);
 
-LOAD DATA LOCAL INFILE 'C:/Users/ThinkPad-E531/Documents/Assignments/2016/Summer/CS 6360.0U1 - Database Design/project_1/data_source/books.csv'
+LOAD DATA LOCAL INFILE 'books.csv'
      INTO TABLE BOOK
    FIELDS TERMINATED BY '\t'
  ENCLOSED BY ''
@@ -105,7 +105,7 @@ LOAD DATA LOCAL INFILE 'C:/Users/ThinkPad-E531/Documents/Assignments/2016/Summer
    IGNORE 1 ROWS
    (Isbn, @dummy, Title, @dummy, @dummy, @dummy, @dummy);
 
-LOAD DATA LOCAL INFILE 'C:/Users/ThinkPad-E531/Documents/Assignments/2016/Summer/CS 6360.0U1 - Database Design/project_1/data_source/book_copies.csv'
+LOAD DATA LOCAL INFILE 'book_copies.csv'
      INTO TABLE BOOK_COPIES
    FIELDS TERMINATED BY '\t'
  ENCLOSED BY ''
@@ -113,7 +113,7 @@ LOAD DATA LOCAL INFILE 'C:/Users/ThinkPad-E531/Documents/Assignments/2016/Summer
    IGNORE 1 ROWS
    (Isbn, Branch_id, No_of_Copies);
 
-LOAD DATA LOCAL INFILE 'C:/Users/ThinkPad-E531/Documents/Assignments/2016/Summer/CS 6360.0U1 - Database Design/project_1/data_source/books.csv'
+LOAD DATA LOCAL INFILE 'books.csv'
      INTO TABLE AUTHORS
    FIELDS TERMINATED BY '\t'
  ENCLOSED BY ''
@@ -121,7 +121,7 @@ LOAD DATA LOCAL INFILE 'C:/Users/ThinkPad-E531/Documents/Assignments/2016/Summer
    IGNORE 1 ROWS
    (@dummy, @dummy, @dummy, Name, @dummy, @dummy, @dummy);
 
-LOAD DATA LOCAL INFILE 'C:/Users/ThinkPad-E531/Documents/Assignments/2016/Summer/CS 6360.0U1 - Database Design/project_1/data_source/books.csv'
+LOAD DATA LOCAL INFILE 'books.csv'
      INTO TABLE BOOK_AUTHORS
    FIELDS TERMINATED BY '\t'
  ENCLOSED BY ''
