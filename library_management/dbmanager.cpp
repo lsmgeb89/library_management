@@ -8,7 +8,7 @@ namespace db {
 DBManager::DBManager(void)
   : mysql_db_(QSqlDatabase::addDatabase("QMYSQL")) {
   mysql_db_.setHostName("localhost");
-  mysql_db_.setDatabaseName("library");
+  mysql_db_.setDatabaseName("Library");
   mysql_db_.setUserName("root");
   mysql_db_.setPassword("890811");
   if (!mysql_db_.open()) {
