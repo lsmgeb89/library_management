@@ -1,0 +1,52 @@
+\documentclass[a4paper, 12pt]{report}
+
+% load packages
+%\usepackage{showframe}
+\usepackage[utf8]{inputenc}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{courier}
+\usepackage{hyperref}
+
+\setlength{\parskip}{1em}
+
+\lstset{
+  language=C,
+  basicstyle=\ttfamily,
+  keywordstyle=\bfseries,
+  showstringspaces=false
+}
+
+\begin{document}
+
+\title{Design of Project 1 for CS 6360.0U1 - Database Design}
+
+\author{Siming Liu}
+
+\maketitle{}
+
+Intention of this project is to create a database host application for library circulation desks. The data source for the database is provided. To implement this application, I divide this project into two parts: creation of database and building host application.
+
+\section*{Creation of Database}
+I choose \lstinline{MySQL} to create my database because I have not any previous experiences with database. So I just simply choose the database Professor mostly uses in the class. So firstly, I have to create the schema of the library database and then import data into it. Most of the part of my schema is the same as one in the requirement document. But my schema for library database has some slight differences.
+
+Firstly, attribute \lstinline{No_of_Copies} is added to table \lstinline{LIBRARY_BRANCH} to reflect the amount of available books in each branch of the library. When a reader checks out a book, the value of the attribute in the corresponding tuple decreases by one. When a reader checks in the book, the value of the attribute in the corresponding tuple increases by one.
+
+Secondly, attribute \lstinline{City}, \lstinline{State}, \lstinline{Phone} are added to table \lstinline{BORROWER} to separate the details of an address to reflect the common situation of our daily life.
+
+Furthermore, all the foreign key in the tables are set with a update strategy \lstinline{ON UPDATE CASCADE} because I want the referencing attributes are updated when the referenced attributes are changed. Since there is no delete operations designed in this database, there is no deleting strategy with foreign keys in the schema.
+
+In terms of importing data, there are various of choices. I could mainly use \lstinline{awk} or \lstinline{sed} command with regular expression combined with other shell commands to adjust data to form a bunch of files. Each file is logically mapped to a table in the schema. By this method, I could adjust the columns conveniently because of the diverse powerful shell commands. After that I could use some simple \lstinline{SQL} command to import data. The second choice is that we could use some \lstinline{GUI} applications related with \lstinline{MySQL} to import data conveniently. But finally, I choose the \lstinline{MySQL} command \lstinline{LOAD DATA} to do that because it is quite simple and the needs of transforming data is not very complicated. Since it is an embedded command supported by \lstinline{MySQL}, we could do it with cross-platform. This is the advantage that other methods don't have.
+
+In the end, following the method of importing data, I choose \lstinline{MySQL} embedded command \lstinline{REPLACE} to deal with some simple ``noisy'' characters. I just replace this these characters to their regular alternatives. For example, replacing \lstinline{&amp;} to \lstinline{&}.
+
+\section*{Building host application}
+
+After building the database, application development could be started. To start with that, I consider to use \lstinline{C++} with \href{https://www.qt.io/}{\lstinline{Qt}}. Although \lstinline{C++} is not very suitable for development of \lstinline{GUI} programs, I think that it is my only choice since I have no experiences with any web programming languages like \lstinline{PHP}, \lstinline{Python}, \lstinline{Ruby}, etc. But since \lstinline{Qt} is the most powerful \lstinline{GUI} framework written by \lstinline{C++}, the heavy burden are relieved to a great extent and I could develop the application quickly with cross-platform capability.
+
+In the requirement document, there are mainly four kinds of tasks with operations needed by librarians. So I choose to use \lstinline{QTabWidget} to separate a main window area into four tabs. Each tab is logically mapped to a task. So in each tab, I could use different combinations of layout, line edits, buttons and views to form each sub-area. 
+
+In terms of codes, all major logic are put in the class \lstinline{MainWindow}. Since whole \lstinline{UI} is not very complicated, I just put all codes in one class. Most operations by librarians should be transformed to corresponding \lstinline{SQL} commands to execute. In order to do that, I mainly use class \lstinline{QSqlQuery} to do that. Since \lstinline{Qt} contains different kinds of drivers for most popular databases, I could use some high-level class instead of directly talking to \lstinline{MySQL} \lstinline{C++} interfaces. To show the result of a \lstinline{SQL} query, I use class \lstinline{QSqlQueryModel} to store the result data and connect the model to \lstinline{QTableView} to show results. By using this method, I could handle most situations since \lstinline{QSqlQueryModel} could only provide a read-only data model for \lstinline{SQL} result sets. In the fines related operations, requirement needs me to provide a mechanism to edit values in the table \lstinline{FINES}. In this situation, I use class \lstinline{QSqlTableModel} to deal with it. \lstinline{QSqlTableModel} is a class that provides an editable data model for a single database table. But according to the document and examples, it could only handle with a single table in the database. But the \lstinline{SQL} query I need is with a \lstinline{JOIN} clause, indicating that it is not only involved in one table in the database. In order to solve this problem, I temporarily create a \lstinline{SQL} \lstinline{VIEW} with that \lstinline{SQL} query and link this \lstinline{VIEW} to a instance of class \lstinline{QSqlTableModel}. Thus users could edit table \lstinline{FINES} in \lstinline{UI} on the fly.
+
+In this project, it is my first time to write a simple \lstinline{GUI} application connected with a database. Although the database and host application are very simple, I learn with different kinds of usage of widgets component, \lstinline{MVC} design pattern and \lstinline{Qt} framework.
+\end{document}
