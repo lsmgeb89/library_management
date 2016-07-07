@@ -9,7 +9,7 @@ namespace db {
 
 class DBManager {
 public:
-  DBManager(void);
+  DBManager(QString& user_name, QString& password);
 
   ~DBManager(void);
 

@@ -5,13 +5,13 @@
 
 namespace db {
 
-DBManager::DBManager(void)
+DBManager::DBManager(QString& user_name, QString& password)
   : mysql_db_(QSqlDatabase::addDatabase("QMYSQL")),
     branch_id_(1) {
   mysql_db_.setHostName("localhost");
   mysql_db_.setDatabaseName("Library");
-  mysql_db_.setUserName("root");
-  mysql_db_.setPassword("890811");
+  mysql_db_.setUserName(user_name);
+  mysql_db_.setPassword(password);
   if (!mysql_db_.open()) {
     std::string err_msg("[db] Open database failed: ");
     err_msg += mysql_db_.lastError().text().toStdString();

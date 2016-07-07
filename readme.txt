@@ -25,9 +25,9 @@ How to Compile and Run:
 8. Import Data to Database
    cd data_source
    mysql -u root -p -v -e "source create_database_import_data.sql;"
-9. Run program
+9. Run program with your MySQL username and password
    cd build
-   ./library_management
+   ./library_management %username %password
 
 References:
    http://doc.qt.io/qt-5/linux.html
