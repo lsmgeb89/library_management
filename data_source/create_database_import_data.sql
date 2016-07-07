@@ -132,10 +132,78 @@ LOAD DATA LOCAL INFILE 'books.csv'
                       FROM AUTHORS
                       WHERE Name = @name);
 
-### Deal with noise ###
+### Normalizing noise ###
 UPDATE BOOK
 SET    TITLE = REPLACE(TITLE, '&amp;', '&')
 WHERE  TITLE LIKE '%&amp;%';
+
+UPDATE AUTHORS
+SET    NAME = REPLACE(NAME, '&amp;', '&')
+WHERE  NAME LIKE '%&amp;%';
+
+UPDATE BOOK
+SET    TITLE = REPLACE(TITLE, 'Ã¶', 'ö')
+WHERE  TITLE LIKE '%Ã¶%';
+
+UPDATE AUTHORS
+SET    NAME = REPLACE(NAME, 'Ã¶', 'ö')
+WHERE  NAME LIKE '%Ã¶%';
+
+UPDATE BOOK
+SET    TITLE = REPLACE(TITLE, 'Ã¤', 'ä')
+WHERE  TITLE LIKE '%Ã¤%';
+
+UPDATE AUTHORS
+SET    NAME = REPLACE(NAME, 'Ã¤', 'ä')
+WHERE  NAME LIKE '%Ã¤%';
+
+UPDATE BOOK
+SET    TITLE = REPLACE(TITLE, 'Ãª', 'ê')
+WHERE  TITLE LIKE '%Ãª%';
+
+UPDATE AUTHORS
+SET    NAME = REPLACE(NAME, 'Ãª', 'ê')
+WHERE  NAME LIKE '%Ãª%';
+
+UPDATE BOOK
+SET    TITLE = REPLACE(TITLE, 'Ã¼', 'a')
+WHERE  TITLE LIKE '%Ã¼%';
+
+UPDATE AUTHORS
+SET    NAME = REPLACE(NAME, 'Ã¼', 'a')
+WHERE  NAME LIKE '%Ã¼%';
+
+UPDATE BOOK
+SET    TITLE = REPLACE(TITLE, 'Ã¨', 'è')
+WHERE  TITLE LIKE '%Ã¨%';
+
+UPDATE AUTHORS
+SET    NAME = REPLACE(NAME, 'Ã¨', 'è')
+WHERE  NAME LIKE '%Ã¨%';
+
+UPDATE BOOK
+SET    TITLE = REPLACE(TITLE, 'Ã§', 'ç')
+WHERE  TITLE LIKE '%Ã§%';
+
+UPDATE AUTHORS
+SET    NAME = REPLACE(NAME, 'Ã§', 'ç')
+WHERE  NAME LIKE '%Ã§%';
+
+UPDATE BOOK
+SET    TITLE = REPLACE(TITLE, 'Ã¹', 'ù')
+WHERE  TITLE LIKE '%Ã¹%';
+
+UPDATE AUTHORS
+SET    NAME = REPLACE(NAME, 'Ã¹', 'ù')
+WHERE  NAME LIKE '%Ã¹%';
+
+UPDATE BOOK
+SET    TITLE = REPLACE(TITLE, 'Ã©', 'é')
+WHERE  TITLE LIKE '%Ã©%';
+
+UPDATE AUTHORS
+SET    NAME = REPLACE(NAME, 'Ã©', 'é')
+WHERE  NAME LIKE '%Ã©%';
 
 ### Show Data ###
 SELECT * FROM BOOK LIMIT 10;
