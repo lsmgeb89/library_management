@@ -24,7 +24,10 @@ MainWindow::MainWindow(db::DBManager* db, QWidget *parent)
 
   QTimer::singleShot(0, this, SLOT(onChangeBranch()));
 
+  connect(ui_->quit, &QAction::triggered, qApp, &QApplication::quit);
   connect(ui_->change_branch, &QAction::triggered, this, &MainWindow::onChangeBranch);
+  connect(ui_->about, &QAction::triggered, this, &MainWindow::onAbout);
+  connect(ui_->about_qt, &QAction::triggered, qApp, &QApplication::aboutQt);
 }
 
 MainWindow::~MainWindow() {
@@ -425,4 +428,9 @@ void MainWindow::onChangeBranch(void) {
 
 void MainWindow::onBranchValueChange(const QString& name, const int& id) {
   this->setWindowTitle("Library Management - Branch " + QString::number(id) + " - " + name);
+}
+
+void MainWindow::onAbout(void) {
+  QString text = QString("<h1>Library Management</h1><p><b>Version 0.1</b><br /> Siming Liu <br />");
+  QMessageBox::about(this, tr("About"), text);
 }

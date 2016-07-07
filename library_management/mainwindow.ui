@@ -28,7 +28,7 @@
         <item row="0" column="0">
          <widget class="QLineEdit" name="inputEdit">
           <property name="placeholderText">
-           <string>Input Here</string>
+           <string>Input keywords split by spaces</string>
           </property>
          </widget>
         </item>
@@ -290,14 +290,14 @@
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionAbout"/>
-    <addaction name="actionAbout_Qt"/>
+    <addaction name="about"/>
+    <addaction name="about_qt"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionQuit"/>
+    <addaction name="quit"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSettings"/>
@@ -317,17 +317,17 @@
     <string>Change Branch</string>
    </property>
   </action>
-  <action name="actionAbout">
+  <action name="about">
    <property name="text">
     <string>About</string>
    </property>
   </action>
-  <action name="actionAbout_Qt">
+  <action name="about_qt">
    <property name="text">
     <string>About Qt</string>
    </property>
   </action>
-  <action name="actionQuit">
+  <action name="quit">
    <property name="text">
     <string>Quit</string>
    </property>

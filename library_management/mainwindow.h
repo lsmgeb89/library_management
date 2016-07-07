@@ -37,6 +37,8 @@ private slots:
 
   void onBranchValueChange(const QString& name, const int& id);
 
+  void onAbout();
+
 private:
   db::DBManager* db_;
   Ui::MainWindow* ui_;
