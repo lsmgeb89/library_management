@@ -252,7 +252,11 @@ void MainWindow::on_check_in_button_clicked() {
   query->prepare(update_book_loan_str);
   query->bindValue(":date_in", QDate::currentDate());
   query->bindValue(":book_id", book_id);
-  query->exec();
+  if (!query->exec()) {
+    qDebug() << query->lastError().text();
+  } else {
+    QMessageBox::information(this, "Success", "Check in success!");
+  }
 
   // Update number of copies
   QString& update_copies_str(query_book_loan_str);
@@ -351,7 +355,11 @@ void MainWindow::on_create_button_clicked() {
   query->bindValue(":city", city.isEmpty() ? QVariant(QVariant::String) : city);
   query->bindValue(":state", state.isEmpty() ? QVariant(QVariant::String) : state);
   query->bindValue(":phone", phone.isEmpty() ? QVariant(QVariant::String) : phone);
-  query->exec();
+  if (!query->exec()) {
+    qDebug() << query->lastError().text();
+  } else {
+    QMessageBox::information(this, "Success", "Create a new borrower successfully!");
+  }
 
   QString sql_query_borrower =
     "SELECT * \
@@ -421,11 +429,6 @@ void MainWindow::on_search_button_clicked() {
     fines_model_->setEditStrategy(QSqlTableModel::OnFieldChange);
     fines_model_->select();
     ui_->fines_view->show();
-  }
-
-  query->clear();
-  if (!query->exec("DROP VIEW IF EXISTS SPECIFIC_FINES")) {
-    qDebug() << query->lastError().text();
   }
 }
 
