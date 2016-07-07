@@ -19,7 +19,7 @@ How to Compile and Run:
 5. Change Directory to build directory
    cd build
 6. Call qmake to generate makefile (Give qmake a path to library_management.pro file as first parameter)
-   qmake ../library_management/library_management.pro
+   qmake ../src/library_management.pro
 7. Call make to build whole project
    make
 8. Import Data to Database
