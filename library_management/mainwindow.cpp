@@ -91,7 +91,7 @@ void MainWindow::on_check_out_button_clicked() {
   }
   query->next();
   if (query->value(0).toInt() < 1) {
-    QMessageBox::information(this, "Error", "Check out failed! <br> The book is not available now!");
+    QMessageBox::critical(this, "Error", "Check out failed! <br> The book is not available now!");
     return;
   }
 
@@ -109,7 +109,7 @@ void MainWindow::on_check_out_button_clicked() {
   }
   query->next();
   if (query->value(0).toInt() == 3) {
-    QMessageBox::information(this, "Error", "Check out failed! <br> The Borrower has 3 active book loans!");
+    QMessageBox::critical(this, "Error", "Check out failed! <br> The Borrower has 3 active book loans!");
     return;
   }
 
@@ -125,7 +125,7 @@ void MainWindow::on_check_out_button_clicked() {
   query->bindValue(":current_date", QDate::currentDate());
   query->exec();
   if (query->size()) {
-    QMessageBox::information(this, "Error", "Check out failed! <br> The Borrower has " +
+    QMessageBox::critical(this, "Error", "Check out failed! <br> The Borrower has " +
                              QString::number(query->size()) + " overdue book loans!");
     loans_model_->setQuery(*query);
     ui_->result_view->show();
@@ -147,7 +147,7 @@ void MainWindow::on_check_out_button_clicked() {
     qDebug() << query->lastError().text();
   }
   if (query->size()) {
-    QMessageBox::information(this, "Error", "Check out failed! <br> The Borrower has " +
+    QMessageBox::critical(this, "Error", "Check out failed! <br> The Borrower has " +
                              QString::number(query->size()) + " unpaid fines!");
     loans_model_->setQuery(*query);
     ui_->result_view->show();
@@ -239,7 +239,7 @@ void MainWindow::on_check_in_button_clicked() {
     fines = offset * 0.25f;
     query->bindValue(":fines", fines);
     query->exec();
-    QMessageBox::information(this, "Warning", "You have a fine with " + QString::number(fines));
+    QMessageBox::warning(this, "Warning", "You have a fine with " + QString::number(fines));
   }
 
   // Update a record
