@@ -24,7 +24,7 @@ How to Compile and Run:
    make
 8. Import Data to Database
    cd data_source
-   mysql -u root -p -v -e "source ../create_database_import_data.sql;"
+   mysql -u root -p -v -e "source create_database_import_data.sql;"
 9. Run program
    cd build
    ./library_management
