@@ -1,7 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "branchdialog.h"
 #include <QDate>
 #include <QVariant>
+#include <QTimer>
+#include <QObject>
 
 MainWindow::MainWindow(db::DBManager* db, QWidget *parent)
   : QMainWindow(parent),
@@ -18,6 +21,10 @@ MainWindow::MainWindow(db::DBManager* db, QWidget *parent)
   ui_->borrower_table_view->setModel(borrower_model_);
   ui_->overdue_view->setModel(overdue_model_);
   ui_->fines_view->setModel(fines_model_);
+
+  QTimer::singleShot(0, this, SLOT(onChangeBranch()));
+
+  connect(ui_->change_branch, &QAction::triggered, this, &MainWindow::onChangeBranch);
 }
 
 MainWindow::~MainWindow() {
@@ -407,4 +414,15 @@ void MainWindow::on_search_button_clicked() {
     fines_model_->select();
     ui_->fines_view->show();
   }
+}
+
+void MainWindow::onChangeBranch(void) {
+  BranchDialog *dialog = new BranchDialog(db_, this);
+  QObject::connect(dialog, &BranchDialog::branchChanged,
+                   this, &MainWindow::onBranchValueChange);
+  dialog->exec();
+}
+
+void MainWindow::onBranchValueChange(const QString& name, const int& id) {
+  this->setWindowTitle("Library Management - Branch " + QString::number(id) + " - " + name);
 }

@@ -284,7 +284,7 @@
     <property name="title">
      <string>Settings</string>
     </property>
-    <addaction name="actionGeneral_Settings"/>
+    <addaction name="change_branch"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -312,9 +312,9 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionGeneral_Settings">
+  <action name="change_branch">
    <property name="text">
-    <string>General Settings</string>
+    <string>Change Branch</string>
    </property>
   </action>
   <action name="actionAbout">

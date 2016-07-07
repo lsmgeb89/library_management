@@ -33,6 +33,10 @@ private slots:
 
   void on_search_button_clicked();
 
+  void onChangeBranch();
+
+  void onBranchValueChange(const QString& name, const int& id);
+
 private:
   db::DBManager* db_;
   Ui::MainWindow* ui_;

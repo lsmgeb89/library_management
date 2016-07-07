@@ -6,7 +6,8 @@
 namespace db {
 
 DBManager::DBManager(void)
-  : mysql_db_(QSqlDatabase::addDatabase("QMYSQL")) {
+  : mysql_db_(QSqlDatabase::addDatabase("QMYSQL")),
+    branch_id_(1) {
   mysql_db_.setHostName("localhost");
   mysql_db_.setDatabaseName("Library");
   mysql_db_.setUserName("root");
@@ -37,6 +38,7 @@ QSqlQuery* DBManager::GetQuery(void) {
 void DBManager::SetBranch(const QString& name, const int& id) {
   branch_name_ = name;
   branch_id_ = id;
+  qDebug() << "Branch updated to " << branch_name_;
 }
 
 } // namespace db

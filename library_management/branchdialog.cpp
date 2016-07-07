@@ -29,5 +29,6 @@ void BranchDialog::on_pushButton_clicked() {
   query->exec();
   query->next();
   db_->SetBranch(ui_->comboBox->currentText(), query->value(0).toInt());
+  emit branchChanged(ui_->comboBox->currentText(), query->value(0).toInt());
   this->close();
 }

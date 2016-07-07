@@ -16,6 +16,9 @@ public:
                         QWidget *parent = nullptr);
   ~BranchDialog();
 
+signals:
+    void branchChanged(const QString& name, const int& id);
+
 private slots:
   void on_pushButton_clicked();
 
