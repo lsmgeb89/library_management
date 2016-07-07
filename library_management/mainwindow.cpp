@@ -398,6 +398,11 @@ void MainWindow::on_search_button_clicked() {
     ui_->overdue_view->show();
   }
 
+  query->clear();
+  if (!query->exec("DROP VIEW IF EXISTS SPECIFIC_FINES")) {
+    qDebug() << query->lastError().text();
+  }
+
   // Check unpaid
   QString& query_fines(query_str);
   query_fines =
@@ -416,6 +421,11 @@ void MainWindow::on_search_button_clicked() {
     fines_model_->setEditStrategy(QSqlTableModel::OnFieldChange);
     fines_model_->select();
     ui_->fines_view->show();
+  }
+
+  query->clear();
+  if (!query->exec("DROP VIEW IF EXISTS SPECIFIC_FINES")) {
+    qDebug() << query->lastError().text();
   }
 }
 
