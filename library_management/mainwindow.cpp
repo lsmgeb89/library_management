@@ -308,8 +308,8 @@ void MainWindow::on_create_button_clicked() {
   QString state(ui_->state_line_edit->text());
   QString phone(ui_->phone_line_edit->text());
 
-  if (ssn.isEmpty() || fname.isEmpty() || lname.isEmpty() || address.isEmpty()) {
-    QMessageBox::critical(this, "Error", "SSN, Name or Address could not be empty!");
+  if (ssn.isEmpty() || fname.isEmpty() || lname.isEmpty() || address.isEmpty() || city.isEmpty() || state.isEmpty()) {
+    QMessageBox::critical(this, "Error", "SSN, Name, Address, City and State could not be empty!");
     return;
   }
 

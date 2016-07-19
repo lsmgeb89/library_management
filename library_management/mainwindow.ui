@@ -111,7 +111,7 @@
            <item row="0" column="0">
             <widget class="QLabel" name="ssn_label">
              <property name="text">
-              <string>Ssn</string>
+              <string>Ssn *</string>
              </property>
             </widget>
            </item>
@@ -121,7 +121,7 @@
            <item row="1" column="0">
             <widget class="QLabel" name="fname_label">
              <property name="text">
-              <string>First Name</string>
+              <string>First Name *</string>
              </property>
             </widget>
            </item>
@@ -131,7 +131,7 @@
            <item row="2" column="0">
             <widget class="QLabel" name="lname_label">
              <property name="text">
-              <string>Last Name</string>
+              <string>Last Name *</string>
              </property>
             </widget>
            </item>
@@ -141,7 +141,7 @@
            <item row="3" column="0">
             <widget class="QLabel" name="address_label">
              <property name="text">
-              <string>Address</string>
+              <string>Address *</string>
              </property>
             </widget>
            </item>
@@ -151,7 +151,7 @@
            <item row="4" column="0">
             <widget class="QLabel" name="city_label">
              <property name="text">
-              <string>City</string>
+              <string>City *</string>
              </property>
             </widget>
            </item>
@@ -161,7 +161,7 @@
            <item row="5" column="0">
             <widget class="QLabel" name="state_label">
              <property name="text">
-              <string>State</string>
+              <string>State *</string>
              </property>
             </widget>
            </item>
@@ -203,7 +203,7 @@
            <item>
             <widget class="QPushButton" name="create_button">
              <property name="text">
-              <string>Ceate</string>
+              <string>Create</string>
              </property>
             </widget>
            </item>
