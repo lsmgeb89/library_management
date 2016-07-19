@@ -38,7 +38,7 @@ void MainWindow::on_searchButton_clicked() {
   QStringList search_words_list = ui_->inputEdit->text().split(QRegExp("\\s"));
 
   QString query_str =
-    "SELECT B.Isbn AS 'ISBN(10)', B.Title AS 'Book Title', A.Name AS 'Author Name(s)', C.No_of_Copies AS 'Number of Copies' "
+    "SELECT C.Book_id, B.Isbn AS 'ISBN(10)', B.Title AS 'Book Title', A.Name AS 'Author Name(s)', C.No_of_Copies AS 'Number of Copies' "
     "FROM   BOOK AS B, AUTHORS AS A, BOOK_AUTHORS AS U, BOOK_COPIES AS C "
     "WHERE  (B.Isbn = U.Isbn AND B.Isbn = C.Isbn AND U.Author_id = A.Author_id)";
 
