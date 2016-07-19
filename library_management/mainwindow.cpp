@@ -390,6 +390,12 @@ void MainWindow::on_search_button_clicked() {
   QString query_str;
   QString card_number = ui_->card_number_edit->text();
 
+  // Clear view
+  overdue_model_->clear();
+  ui_->overdue_view->show();
+  fines_model_->clear();
+  ui_->fines_view->show();
+
   // Check overdue
   QString& query_overdue(query_str);
   query_overdue =
