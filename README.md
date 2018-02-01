@@ -2,7 +2,7 @@
 
 ## Summary
   * Built a library circulation desk application that interfaces with a [MySQL][mysql] database by C++
-  * Implemented application logics including book loan and searching, borrower and fines management by devising SQL querys communicating with database
+  * Implemented application logic including book loan and searching, borrower and fines management by devising SQL queries communicating with database
   * Utilized [Qt][qt] framework and [MVC][mvc] approach to construct application [GUI][gui] and show SQL query results
 
 ## Project Information
